@@ -61,8 +61,26 @@ Based on Jinja2 and my template *layout.html*, I created another 10 html files. 
 
 In *app.py* I manage my website's paths, check corectness of provided data, prevent any malicious input (e.g. you can't view other user's patients, their forms nor edit anything that doesn't belong to your account) and insert/update/delete and select records from database.
 
-
 ### SQL, sqlite3
 Database stores users, patients, questionnaires, each medicine taken by a patient and different options that are later available to choose while filling out a questionnaire (in select boxes, checkboxes etc.).
 
 There are 13 different tables with primary and foreign keys.
+
+### Changing password
+<img src="https://github.com/chlorin3/pharmdooz-project/blob/main/change-password-kopia.gif" width=800>
+
+### Form validation
+<img src="https://github.com/chlorin3/pharmdooz-project/blob/main/form-validation-kopia.gif" width=800>
+
+### Form edition
+<img src="https://github.com/chlorin3/pharmdooz-project/blob/main/login-edit-form-kopia.gif" width=800>
+<img src="https://github.com/chlorin3/pharmdooz-project/blob/main/pharmdooz-username-kopia.gif" width=800>
+
+### Responsiveness
+<img src="https://github.com/chlorin3/pharmdooz-project/blob/main/responsive-1.gif" width=800>
+<img src="https://github.com/chlorin3/pharmdooz-project/blob/main/responsive-2.gif" width=800>
+<img src="https://github.com/chlorin3/pharmdooz-project/blob/main/responsive-form.gif" width=500>
+
+### Unauthorized access
+<img src="https://github.com/chlorin3/pharmdooz-project/blob/main/unauthorized-access-kopia.gif" width=800>
+<img src="https://github.com/chlorin3/pharmdooz-project/blob/main/unauthorized-access-2-kopia.gif" width=800>
