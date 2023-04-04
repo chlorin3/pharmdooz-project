@@ -65,7 +65,7 @@ In *app.py* I manage my website's paths, check corectness of provided data, prev
 Database stores users, patients, questionnaires, each medicine taken by a patient and different options that are later available to choose while filling out a questionnaire (in select boxes, checkboxes etc.).
 
 There are 13 different tables with primary and foreign keys.
-
+![](https://github.com/chlorin3/pharmdooz-project/blob/main/db-diagram.png)
 ### Changing password
 <img src="https://github.com/chlorin3/pharmdooz-project/blob/main/change-password-kopia.gif" width=800>
 
