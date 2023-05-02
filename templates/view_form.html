@@ -1,0 +1,199 @@
+{% extends "layout.html" %}
+
+{% block title %}
+formularz {{ form.filled_date.split(" ")[0] }}
+{% endblock %}
+
+{% block main %}
+
+<div id="form-container" class="py-md-3 px-md-5 bg-light center mx-auto row">
+
+    <div class="col-md-5 col-12 py-md-1 py-3 text-start">
+        <em>Formularz z dnia {{ form.filled_date.split(" ")[0] }}</em>
+    </div>
+    <div class="col-md-3 col-6 ms-auto">
+        <form action="/edit_form" method="post">
+            <input name="form_id" type="hidden" value="{{ form.form_id }}">
+            <input name="patient_code" type="hidden" value="{{ patient.code }}">
+            <input type="submit" class="btn btn-outline-secondary w-100" value="Edytuj formularz">
+        </form>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+        <form action="/delete_form" method="post">
+            <input name="form_id" type="hidden" value="{{ form.form_id }}">
+            <input name="patient_code" type="hidden" value="{{ patient.code }}">
+            <input type="submit" class="btn btn-outline-danger w-100" value="Usuń formularz">
+        </form>
+    </div>
+
+    <h3 class="mb-3">{{ patient.patient_name }} {{ patient.patient_surname }}</h3>
+    <div class="col-sm-6 pe-sm-1 text-break mx-auto">
+    <table class="table table-bordered table-striped caption-top text-start">
+        <tr>
+            <th scope="row" class="w-50">Kod</th>
+            <td class="w-50">{{ patient.code }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Wiek</th>
+            <td>{{ form.age }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Płeć</th>
+            <td>{{ form.sex }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Waga</th>
+            <td>{{ form.weight }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Wzrost</th>
+            <td>{{ form.height }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Wykształcenie</th>
+            <td>{{ form.education_level }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Papierosy</th>
+            <td>{{ form.cigarettes_status }} {{ form.cigarettes_freq }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Alkohol</th>
+            <td>{{ form.alcohol_status }} {{ form.alcohol_freq }}</td>
+        </tr>
+    </table>
+    </div>
+
+    <div class="col-sm-6 ms-auto ps-sm-1 mb-3 text-break">
+    <table class="table table-striped table-bordered caption-top text-start">
+        <tr>
+            <th scope="row" class="w-50">Samoocena stanu zdrowia</th>
+            <td class="w-50">{{ form.health_status }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Ilu lekarzy sprawuje opiekę nad pacjentem?</th>
+            <td>{{ form.doctors_num }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Jakie specjalizacje</th>
+            <td>
+                {% for row in specializations %}
+                {{ row.specialization_name }}<br>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">Główne rozpoznania</th>
+            <td>{{ form.medical_diagnosis }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Uczulenia</th>
+            <td>{{ form.allergy }}</td>
+        </tr>
+    </table>
+    </div>
+
+    <div class="col-md-12 mb-3 overflow-auto">
+    <table class="table table-bordered table-striped caption-top text-start">
+        <tr>
+            <th scope="col" class="w-25"></th>
+            <th scope="col" class="w-25">Dane subiektywne</th>
+            <th scope="col" class="w-25">Dane obiektywne</th>
+        </tr>
+
+            {% for row in open_ended_answers %}
+            <tr>
+            <th class="py-3" scope="row">{{ row.question_text }}</th>
+            <td>{{ row.subjective_data }}</td>
+            <td>{{ row.objective_data }}</td>
+            </tr>
+            {% endfor %}
+    </table>
+    </div>
+
+    <div class="col-md-12 mb-3 overflow-auto">
+    <h3>Wywiad farmakologiczny</h3>
+    <table class="table table-bordered table-striped caption-top text-start mt-3">
+        <thead>
+            <th scope="row" class="w-25">Pobierany preparat</th>
+            <th scope="row">Data początku pobierania leku/preparatu</th>
+            <th scope="row">Kategoria</th>
+            <th scope="row">Źródło</th>
+            <th scope="row">Sposób pobierania</th>
+            <th scope="row">Stopień przestrzegania</th>
+
+        </thead>
+        <tbody>
+        {% for row in taken_medicine %}
+        <tr>
+            <td>{{ row.medicine_name }}</td>
+            <td>{{ row.start_date }}</td>
+            <td>{{ row.category_name }}</td>
+            <td>{{ row.source_name }}</td>
+            <td>{{ row.administration_name }}</td>
+            <td>{{ row.compliance }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    <div class="col-md-12 mb-3">
+    <table class="table table-bordered table-striped caption-top text-start">
+        <tr>
+            <th scope="row" class="w-50">Problemy związane ze stosowaniem leków</th>
+            <td>{{ form.problem_name }}<br>{{ form.problem_detail }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Interwencja farmaceutyczna</th>
+            <td>{{ form.intervention_name }}<br>{{ form.intervention_detail }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Efekt terapeutyczny (informacje obiektywne – np. wyniki badań laboratoryjnych)</th>
+            <td>{{ form.therapeutic_effect_objective }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Efekt terapeutyczny (informacje subiektywne – odczucia pacjenta)</th>
+            <td>{{ form.therapeutic_effect_subjective }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Działania niepożądane, reakcje uczuleniowe,
+                reakcje idiosynkratyczne, toksyczne</th>
+            <td>{{ form.side_effects }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Ocena wiedzy pacjenta na temat pobieranych preparatów</th>
+            <td>{{ form.knowledge_est }}</td>
+        </tr>
+    </table>
+    </div>
+
+    <div class="col-md-12 mb-3">
+    <h3>Podsumowanie</h3>
+    <table class="table table-bordered table-striped caption-top text-start  mt-3">
+            {% for col1, col2 in summary %}
+                <tr>
+                    <th class="w-50">{{ col1 }}</th>
+                    <td class="w-50">{{ col2 }}</td>
+                </tr>
+            {% endfor %}
+    </table>
+
+    <div class="row justify-content-center">
+    <div class="col-sm-3 col-12 mb-1">
+        <form action="/edit_form" method="post">
+            <input name="form_id" type="hidden" value="{{ form.form_id }}">
+            <input name="patient_code" type="hidden" value="{{ patient.code }}">
+            <input type="submit" class="btn btn-outline-secondary w-100" value="Edytuj formularz">
+        </form>
+    </div>
+    <div class="col-sm-3 col-12">
+        <form action="/delete_form" method="post">
+            <input name="form_id" type="hidden" value="{{ form.form_id }}">
+            <input name="patient_code" type="hidden" value="{{ patient.code }}">
+            <input type="submit" class="btn btn-outline-danger w-100" value="Usuń formularz">
+        </form>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

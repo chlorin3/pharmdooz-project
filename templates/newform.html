@@ -1,0 +1,441 @@
+{% extends "layout.html" %}
+
+{% block script %}
+<script src="/static/myscript.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block title %}
+    Dodaj formularz
+{% endblock %}
+
+{% block main %}
+<nav id="navbar-example2" class="navbar navbar-expand-md d-none d-lg-block sticky-top bg-light px-3 mb-3">
+    <button class="navbar-toggler btn btn-outline-primary ms-auto" data-bs-target="#navbar2" data-bs-toggle="collapse" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-menu-app" viewBox="0 0 16 16">
+            <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h2A1.5 1.5 0 0 1 5 1.5v2A1.5 1.5 0 0 1 3.5 5h-2A1.5 1.5 0 0 1 0 3.5v-2zM1.5 1a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-2zM0 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8zm1 3v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2H1zm14-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2h14zM2 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
+        </svg>
+    </button>
+    <div class="collapse navbar-collapse" id="navbar2">
+    <ul class="nav nav-pills mx-auto ">
+      <li class="nav-item ">
+        <a class="nav-link" href="#scrollspyHeading1">Dane podstawowe</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#scrollspyHeading2">Zdrowie</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#scrollspyHeading3">Dane subiektywne/obiektywne</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#scrollspyHeading4">Leki/preparaty</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#scrollspyHeading5">Podsumowanie</a>
+      </li>
+    </ul>
+    </div>
+</nav>
+
+
+    <!-- CONTAINER0-->
+    <div id="form-container" class="py-3 px-5 bg-light center mx-auto" >
+    <h3>Indywidualny Plan Opieki Farmaceutycznej</h3><hr>
+
+    {% if request.path == "/edit_form" %}
+    <form class="needs-validation" novalidate action="\edit_form" method="post">
+        <h4 id="scrollspyHeading1">Podstawowe dane</h4>
+
+        <!-- ROW PODSTAWOWE DANE -->
+        <div class="row g-3 mb-5">
+            <div class="col-sm-4 col-12">
+                <label for="inputName" class="form-label">Imię</label>
+                <input class="form-control" id="inputName" type="text" value="{{ form[0].patient_name }}" disabled readonly>
+            </div>
+            <div class="col-sm-4 col-12">
+                <label for="inputSurname" class="form-label">Nazwisko</label>
+                <input class="form-control" id="inputSurname" type="text" value="{{ form[0].patient_surname }}"  disabled readonly>
+            </div>
+            <div class="col-sm-4 col-12">
+                <label for="inputCode" class="form-label">Kod</label>
+                <input class="form-control" id="inputCode" type="text" value="{{ form[0].code }}" disabled readonly>
+                <input name="patient_id" type="hidden" value="{{ form[0].patient_id }}">
+                <input name="patient_code" type="hidden" value="{{ form[0].code }}">
+                <input name="form_id" type="hidden" value="{{ form[0].form_id }}">
+            </div>
+    {% else %}
+
+    <form class="needs-validation" novalidate action="\addform" method="post">
+
+
+        <h4 id="scrollspyHeading1">Podstawowe dane</h4>
+
+        <!-- ROW PODSTAWOWE DANE -->
+        <div class="row g-3 mb-5">
+            <div class="col-sm-4 col-12">
+                <label for="inputName" class="form-label">Imię</label>
+                <input class="form-control" id="inputName" type="text" value="{{ patient[0].patient_name }}" disabled readonly>
+            </div>
+            <div class="col-sm-4 col-12">
+                <label for="inputSurname" class="form-label">Nazwisko</label>
+                <input class="form-control" id="inputSurname" type="text" value="{{ patient[0].patient_surname }}"  disabled readonly>
+            </div>
+            <div class="col-sm-4 col-12">
+                <label for="inputCode" class="form-label">Kod</label>
+                <input class="form-control" id="inputCode" type="text" value="{{ patient[0].code }}" disabled readonly>
+                <input name="patient_id" type="hidden" value="{{ patient[0].patient_id }}">
+                <input name="patient_code" type="hidden" value="{{ patient[0].code }}">
+            </div>
+        {% endif %}
+
+        <!-- KOD PACJENTA
+        <div class="col-md-4">
+            <label for="inputCode" class="form-label">Pacjent KOD</label>
+            <input autocomplete="off" class="form-control" id="inputCode" name="patientCode" placeholder="wpisz KOD" type="text" required>
+        </div>-->
+        <!-- END KOD PACJENTA -->
+
+        <!-- PŁEĆ PACJENTA -->
+        <div class="col-md-2 col-6">
+            <label for="inputSex" class="form-label">Płeć</label>
+            <select class="form-select" id="inputSex" name="sex" required>
+                <option disabled value="" selected>Wybierz...</option>
+                <option value="K">K</option>
+                <option value="M">M</option>
+            </select>
+        </div>
+        <!-- END PŁEĆ PACJENTA -->
+
+        <!-- WIEK PACJENTA -->
+        <div class="col-md-2 col-6">
+            <label for="inputAge" class="form-label">Wiek</label>
+            <input autocomplete="off" class="form-control" id="inputAge" min="1" max="110" name="age" placeholder="Wiek" type="number" required>
+        </div>
+        <!-- END WIEK PACJENTA -->
+
+        <!-- WAGA PACJENTA -->
+        <div class="col-md-2 col-6">
+            <label for="inputWeight" class="form-label">Waga</label>
+            <input autocomplete="off" class="form-control" id="inputWeight" min="1" max="500" name="weight" placeholder="Waga" type="number" required>
+        </div>
+        <!-- END WAGA PACJENTA -->
+
+        <!-- WZROST PACJENTA -->
+        <div class="col-md-2 col-6">
+            <label for="inputHeight" class="form-label">Wzrost</label>
+            <input autocomplete="off" class="form-control" id="inputHeight" min="1" max="250" name="height" placeholder="Wzrost" type="number" required>
+        </div>
+        <!-- END WZROST PACJENTA -->
+
+        <!-- WYKSZTAŁCENIE PACJENTA -->
+        <div class="col-md-4">
+            <label for="inputEducation" class="form-label">Wykształcenie</label>
+            <select class="form-select" id="inputEducation" name="education_level" required>
+                <option disabled value="" selected>Wybierz...</option>
+            {% for option in education_opt %}
+                <option value="{{ option }}">{{ option }}</option>
+            {% endfor %}
+            </select>
+        </div>
+        <!-- END WYKSZTAŁCENIE PACJENTA -->
+
+        </div>
+        <!-- END ROW PODSTAWOWE DANE -->
+
+        <hr>
+        <h4 id="scrollspyHeading2">Zdrowie</h4>
+
+        <!-- ROW ZROWIE -->
+        <div class="row g-3 mb-3">
+
+            <!-- SAMOOCENA PACJENTA -->
+            <div class="col-md-4">
+                <label for="inputHealth" class="form-label">Samoocena stanu zdrowia</label>
+                <select class="form-select" id="inputHealth" name="health_status" required>
+                    <option disabled value="" selected>Wybierz...</option>
+                {% for option in health_opt %}
+                    <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <!-- END SAMOOCENA PACJENTA -->
+
+            <!-- PAPIEROSY -->
+            <div class="col-md-2 col-6">
+                <label for="inputCigarettes" class="form-label">Papierosy</label>
+                <select class="form-select" id="inputCigarettes" name="cigarettes" required>
+                    <option disabled value="" selected>Wybierz...</option>
+                    <option value="tak">Tak</option>
+                    <option value="nie">Nie</option>
+                </select>
+            </div>
+            <!-- END PAPIEROSY -->
+
+            <!-- PAPIEROSY2 -->
+            <div class="col-md-2 col-6">
+                <label for="cigarettes_freq" class="form-label">Jeśli tak</label>
+                <select class="form-select" id="cigarettes_freq" name="cigarettes_freq" disabled>
+                    <option disabled  value="" selected>Wybierz...</option>
+                    <option value="codziennie">Codziennie</option>
+                    <option value="okazjonalnie ">Okazjonalnie</option>
+                </select>
+            </div>
+            <!-- END PAPIEROSY2 -->
+
+            <!-- ALKOHOL -->
+            <div class="col-md-2 col-6 ms-auto">
+                <label for="inputAlcohol" class="form-label">Alkohol</label>
+                <select class="form-select" id="inputAlcohol" name="alcohol" required>
+                    <option disabled value="" selected>Wybierz...</option>
+                    <option value="tak">Tak</option>
+                    <option value="nie">Nie</option>
+                </select>
+            </div>
+            <!-- END ALKOHOL -->
+
+            <!-- ALKOHOL2 -->
+            <div class="col-md-2 col-6">
+                <label for="alcohol_freq" class="form-label">Jeśli tak</label>
+                <select class="form-select" id="alcohol_freq" name="alcohol_freq" disabled>
+                    <option disabled value="" selected>Wybierz...</option>
+                    <option value="codziennie">Codziennie</option>
+                    <option value="okazjonalnie ">Okazjonalnie</option>
+                </select>
+            </div>
+            <!-- END ALKOHOL -->
+
+        </div>
+        <!-- END ROW ZDROWIE -->
+
+        <!-- ROW1 -->
+        <div class="row g-3">
+            <!-- LEKARZE PACJENTA -->
+            <div class="col-md-4 ms-auto">
+                <label for="inputDoctors" class="form-label">Liczba lekarzy sprawujących stałą opiekę nad pacjentem</label>
+                <input autocomplete="off" class="form-control" id="inputDoctors" min="0" name="doctors_num" placeholder="Liczba" type="number" required>
+
+            <!-- END LEKARZE PACJENTA -->
+
+            <!-- SPECJALIZACJE LEKARZY -->
+
+                <fieldset id="specialization_fieldset" disabled>
+                <legend class=""><span class="fs-6">Jakie specjalizacje</span></legend>
+                <div class="h-spec border">
+                {% for row in specialization_opt %}
+                    <div class="form-check text-start">
+                        <input class="form-check-input" name="specialization" type="checkbox" value="{{ row.specialization_id }}" id="{{ row.specialization_id }}">
+                        <label class="form-check-label" for="{{ row.specialization_id }}">{{ row.specialization_name }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+                </fieldset>
+            </div>
+            <!-- END SPECJALIZACJE LEKARZY -->
+
+            <!-- ROZPOZNANIA -->
+            <div class="col-md-4 mb-3">
+                <label for="medical_diagnosis" class="form-label">Główne rozpoznania</label>
+                <textarea class="form-control" id="medical_diagnosis" name="medical_diagnosis" rows="3"></textarea>
+
+            <!-- END ROZPOZNANIA -->
+
+            <!-- UCZULENIA -->
+
+                <label for="allergy" class="form-label">Uczulenia</label>
+                <textarea class="form-control" id="allergy" name="allergy" rows="3"></textarea>
+            </div>
+            <!-- END UCZULENIA -->
+
+        </div>
+        <!-- END ROW1 -->
+
+
+        <hr>
+        <h4 id="scrollspyHeading3" class="mb-3">Dane subiektywne/obiektywne</h4>
+        <!-- ROW4 -->
+        <div class="row g-3 mb-3">
+        {% for row in questions %}
+
+            <div class="col-md-4 mb-3">
+                {{ row.question_text }}
+            </div>
+            <div class="col-md-4 mb-3">
+                <textarea class="form-control" name="sub{{row.question_id}}" placeholder="Dane subiektywne" rows="3"></textarea>
+            </div>
+            <div class="col-md-4 mb-3">
+                <textarea class="form-control" name="obj{{row.question_id}}" placeholder="Dane obiektywne" rows="3"></textarea>
+            </div>
+
+        {% endfor %}
+        </div>
+        <!-- END ROW4 -->
+
+        <hr>
+        <h4 id="scrollspyHeading4" class="mb-0">Leki/preparaty</h4>
+
+        <!-- ROW5 -->
+        <div class="row g-3 mt-2" id="medicine1">
+            <h5>Lek 1:</h5>
+            <!-- PREPARAT -->
+            <div class="col-md-4 medName">
+                <label for="medicineName" class="form-label">Pobierany preparat farmaceutyczny</label>
+                <input autocomplete="off" class="form-control" id="medicineName" name="medicineName" placeholder="Wpisz preparat" type="text" required>
+            </div>
+            <!-- END PREPARAT -->
+
+            <!-- DATA POCZ. -->
+            <div class="col-md-4 medDate">
+                <label for="medicineDate" class="form-label">Data początku pobierania leku/preparatu</label>
+                <input autocomplete="off" class="form-control" id="medicineDate" name="medicineDate" type="date" required>
+            </div>
+            <!-- END DATA POCZ. -->
+
+            <!-- POBIERANIE -->
+            <div class="col-md-4 medAdministration">
+                <label for="medicineAdministration" class="form-label">Sposób pobierania</label>
+                <select class="form-select" id="medicineAdministration" name="medicineAdministration" required>
+                    <option disabled value="" selected>Wybierz...</option>
+                    {% for row in medicine_administration %}
+                    <option value="{{ row.administration_id }}">{{ row.administration_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- KATEGORIA -->
+            <div class="col-md-4 medCategory">
+                <label for="medicineCategory" class="form-label">Kategoria</label>
+                <select class="form-select" id="medicineCategory" name="medicineCategory" required>
+                    <option disabled value="" selected>Wybierz...</option>
+                    {% for row in medicine_category %}
+                    <option value="{{ row.category_id }}">{{ row.category_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- END KATEGORIA -->
+
+            <!-- ŹRÓDŁO -->
+            <div class="col-md-4 medSource">
+                <label for="medicineSource" class="form-label">Źródła pochodzenia</label>
+                <select class="form-select" id="medicineSource" name="medicineSource" required>
+                    <option disabled value="" selected>Wybierz...</option>
+                    {% for row in medicine_sources %}
+                    <option value="{{ row.source_id }}">{{ row.source_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- END ŹRÓDŁO -->
+
+            <!-- PRZESTRZEGANIE -->
+            <div class="col-md-4 mb-2 medCompliance">
+                <label for="compliance" class="form-label">Stopień przestrzegania (compliance)</label>
+                <input autocomplete="off" class="form-control" id="compliance" min="0" max="5" name="compliance" placeholder="Wpisz stopień" type="number" required>
+            </div>
+            <!-- END PRZESTRZEGANIE -->
+        </div>
+
+            <div class="row g-3" id="addMedicine">
+                <div class="col-md-4 ms-auto">
+                    <button class="btn btn-secondary w-100" type="button">Dodaj kolejny lek</button>
+                </div>
+            </div>
+            <!-- END ROW5 -->
+
+        <hr>
+        <!-- ROW8 -->
+        <div class="row g-3 mb-3 align-items-end">
+
+            <!-- PROBLEMY -->
+            <div class="col-md-6">
+                <label for="medicineProblem" class="form-label">Problemy związane ze stosowaniem leków</label>
+                <select class="form-select" id="medicineProblem" name="medicineProblem" required>
+                    <option disabled value="" selected>Wybierz...</option>
+                    {% for row in medicine_problem %}
+                    <option value="{{ row.problem_id }}">{{ row.problem_name }}</option>
+                    {% endfor %}
+                </select>
+                <textarea class="form-control mt-2" name="problemText" placeholder="Wpisz dodatkowe informacje o problemie" rows="3"></textarea>
+            </div>
+            <!-- END PROBLEMY -->
+
+            <!-- INTERWENCJA -->
+            <div class="col-md-6">
+                    <label for="medicineIntervention" class="form-label">Interwencja farmaceutyczna</label>
+                    <select class="form-select" id="medicineIntervention" name="medicineIntervention" required>
+                        <option disabled value="" selected>Wybierz...</option>
+                        {% for row in intervention_opt %}
+                        <option value="{{ row.intervention_id }}">{{ row.intervention_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <textarea class="form-control mt-2" name="interventionText" placeholder="Wpisz jakie inne działania" rows="3"></textarea>
+            </div>
+            <!-- END INTERWENCJA-->
+
+
+            <div class="col-md-6">
+                <label for="effect_obj" class="form-label">Efekt terapeutyczny (informacje obiektywne – np. wyniki badań laboratoryjnych)</label>
+                <textarea class="form-control" id="effect_obj" name="effect_obj" placeholder="" rows="2"></textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label for="effect_sub" class="form-label">Efekt terapeutyczny (informacje subiektywne – odczucia pacjenta)</label>
+                <textarea class="form-control" id="effect_sub" name="effect_sub" placeholder="" rows="2"></textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label for="side_effect" class="form-label">Działania niepożądane, reakcje uczuleniowe, reakcje idiosynkratyczne, toksyczne</label>
+                <textarea class="form-control" id="side_effect" name="side_effect" placeholder="" rows="2"></textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label for="knowledge_est" class="form-label">Ocena wiedzy pacjenta na temat pobieranych preparatów</label>
+                <textarea class="form-control" id="knowledge_est" name="knowledge_est" placeholder="" rows="2"></textarea>
+            </div>
+
+        </div>
+        <!-- END ROW8 -->
+
+        <hr class="mt-4">
+        <h4 id="scrollspyHeading5">Podsumowanie</h4>
+        <!-- ROW9 -->
+        <div class="row g-3 mb-3">
+
+            <div class="col-md-6">
+                <label for="diagnosis" class="form-label">Rozpoznanie</label>
+                <textarea class="form-control" id="diagnosis" name="diagnosis" placeholder="" rows="3"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label for="issue" class="form-label">Lek/preparat – problem terapeutyczny</label>
+                <textarea class="form-control" id="issue" name="issue" placeholder="" rows="3"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label for="goal" class="form-label">Cel do osiągnięcia</label>
+                <textarea class="form-control" id="goal" name="goal" placeholder="" rows="3"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label for="condition" class="form-label">Obecny stan</label>
+                <textarea class="form-control" id="condition" name="condition" placeholder="" rows="3"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label for="intervention" class="form-label">Interwencja farmaceuty</label>
+                <textarea class="form-control" id="intervention" name="intervention" placeholder="" rows="3"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label for="recommendation" class="form-label">Zalecenia farmaceuty</label>
+                <textarea class="form-control" id="recommendation" name="recommendation" placeholder="" rows="3"></textarea>
+            </div>
+
+        </div>
+        <!-- END ROW9 -->
+
+
+        <div class="col-12 mt-4 mb-3">
+            <button class="btn btn-primary" type="submit">Zapisz</button>
+        </div>
+
+    </form>
+
+    {% block script_bottom %}{% endblock %}
+    </div>
+    <!-- END CONTAINER0-->
+{% endblock %}

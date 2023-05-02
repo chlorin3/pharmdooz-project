@@ -1,0 +1,76 @@
+{% extends "newform.html" %}
+
+    {% block script_bottom %}
+    <script>
+        var form = {{ form|safe }}[0];
+        var answers = {{ answers|safe }};
+        var supervision = {{ supervision|safe }};
+        var taken_medicine = {{ taken_medicine|safe }};
+
+        $("#inputSex").val(form.sex).change();
+        $("#inputAge").val(form.age).change();
+        $("#inputWeight").val(form.weight).change();;
+        $("#inputHeight").val(form.height).change();;
+        $("#inputEducation").val(form.education_level).change();
+        $("#inputHealth").val(form.health_status).change();
+        $("#inputCigarettes").val(form.cigarettes_status).change();
+        if (form.cigarettes_status == "tak")
+            $("#cigarettes_freq").prop("disabled", false);
+        $("#cigarettes_freq").val(form.cigarettes_freq).change();
+        $("#inputAlcohol").val(form.alcohol_status).change();
+        if (form.alcohol_status == "tak")
+            $("#alcohol_freq").prop("disabled", false);
+        $("#alcohol_freq").val(form.alcohol_freq).change();
+        $("#inputDoctors").val(form.doctors_num).change();
+        $("#medical_diagnosis").val(form.medical_diagnosis).change();
+        $("#allergy").val(form.allergy).change();
+
+        //Specializacje lekarzy
+        if (supervision.length != 0)
+            $("#specialization_fieldset").prop("disabled", false);
+
+        let text = "";
+        for (let i = 0; i < supervision.length; i++) {
+            text = "#specialization_fieldset input[value=" + supervision[i]["specialization_id"] + "]";
+            $(text).prop("checked", true);
+        }
+        //Pytania sub/ob
+        for (let i = 1; i <= answers.length; i++) {
+            text = "textarea[name=sub" + i + "]";
+            $(text).val(answers[i - 1]["subjective_data"]).change();
+            text = "textarea[name=obj" + i + "]";
+            $(text).val(answers[i - 1]["objective_data"]).change();
+        }
+
+
+        for (let i = 1; i <= taken_medicine.length; i++) {
+            $("#medicine" + i + " #medicineName").val(taken_medicine[i - 1]["medicine_name"]).change();
+            $("#medicine" + i + " #medicineDate").val(taken_medicine[i - 1]["start_date"]).change();
+            $("#medicine" + i + " #medicineAdministration").val(taken_medicine[i - 1]["administration_id"]).change();
+            $("#medicine" + i + " #medicineCategory").val(taken_medicine[i - 1]["category_id"]).change();
+            $("#medicine" + i + " #medicineSource").val(taken_medicine[i - 1]["source_id"]).change();
+            $("#medicine" + i + " #compliance").val(taken_medicine[i - 1]["compliance"]).change();
+            if (i != taken_medicine.length)
+                AddButtonFunc();
+        }
+
+
+        //Leki/preparaty
+        $("#medicineProblem").val(form.problem_id).change();
+        $("textarea[name=problemText]").val(form.problem_detail).change();
+        $("#medicineIntervention").val(form.intervention_id).change();
+        $("textarea[name=interventionText]").val(form.intervention_detail).change();
+        $("#effect_obj").val(form.therapeutic_effect_objective).change();
+        $("#effect_sub").val(form.therapeutic_effect_subjective).change();
+        $("#side_effect").val(form.side_effects).change();
+        $("#knowledge_est").val(form.knowledge_est).change();
+
+        //Podsumowanie
+        $("#diagnosis").val(form.diagnosis).change();
+        $("#issue").val(form.issue).change();
+        $("#goal").val(form.goal).change();
+        $("#condition").val(form.current_condition).change();
+        $("#intervention").val(form.intervention).change();
+        $("#recommendation").val(form.recommendation).change();
+    </script>
+    {% endblock %}

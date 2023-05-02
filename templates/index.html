@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Pacjenci
+{% endblock %}
+
+{% block main %}
+<div class="container-md mb-3">
+    <div class="mb-3 mt-5">
+        <input autocomplete="off" autofocus placeholder="Wpisz KOD pacjenta" type="text">
+    </div>
+    <table class="table table-striped table-hover align-middle w-75 m-auto">
+        <thead>
+            <tr>
+            <th scope="col">KOD PACJENTA</th>
+            <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in patients %}
+            <tr>
+                <td>{{ patient.code }}</td>
+                <td>
+                    <form action="/patient/{{ patient.code }}" method="post">
+                        <input name="id" type="hidden" value="{{ patient.patient_id }}">
+                        <input type="submit" value="Wyświetl">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+
+        let input = document.querySelector('input');
+        input.addEventListener('input', async function() {
+            let response = await fetch('/search?q=' + input.value);
+            let patients = await response.json();
+            let html = '';
+
+            if (input.value == '') {
+                html += '{% for patient in patients %}<tr><td>{{ patient.code }}</td><td><form action="/patient/{{ patient.code }}" method="post"><input name="id" type="hidden" value="{{ patient.patient_id }}"><input type="submit" value="Wyświetl"></form></td></tr>{% endfor %}';
+            }
+            else {
+                for (let id in patients) {
+                    html += '<tr>';
+                    html += '<td>' + patients[id].code + '</td>';
+                    html += '<td><form action="/patient/' + patients[id].code + '" method="post"><input name="id" type="hidden" value="' + patients[id].patient_id + '"><input type="submit" value="Wyświetl"></form></td>';
+                    html += '</tr>';
+                }
+            }
+        document.querySelector('tbody').innerHTML = html;
+        });
+
+    </script>
+{% endblock %}

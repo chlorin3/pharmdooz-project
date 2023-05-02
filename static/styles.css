@@ -1,0 +1,47 @@
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+/* Colors for brand */
+nav .navbar-brand .blue
+{
+    color: #537fbe;
+}
+nav .navbar-brand .gray
+{
+    color: #9fb6cd;
+}
+nav .navbar-brand .yellow
+{
+    color: #f5b82e;
+}
+nav .navbar-brand .green
+{
+    color: #2e944b;
+}
+
+.h-spec {
+    height: 100px;
+    overflow: auto;
+}
+
+#form-container
+{
+    max-width: 1000px;
+}
+
+h4
+{
+    scroll-margin-top: 3em;
+}
+
+.btn-size {
+    width: 200px;
+}
+
+.col-mywidth {
+    min-width: 50%;
+    max-width: 50%;
+}

@@ -23,12 +23,12 @@ Session(app)
 db = SQL("sqlite:///pharmdooz.db")
 
 EDUCATION_OPT = [
-        "Niepełne podstawowe",
-        "Podstawowe",
-        "Zawodowe",
-        "Średnie",
-        "Wyższe",
-    ]
+    "Niepełne podstawowe",
+    "Podstawowe",
+    "Zawodowe",
+    "Średnie",
+    "Wyższe",
+]
 
 HEALTH_OPT = [
     "Bardzo dobra",
@@ -51,17 +51,15 @@ MEDICINE_PROBLEM = db.execute("SELECT * FROM problem")
 
 INTERVENTION_OPT = db.execute("SELECT * FROM intervention")
 
+
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
     """Portfolio of patients"""
-
     if request.method == "POST":
-        return apology()
+        return apology("TODO")
     else:
-        patients = db.execute(
-            "SELECT * FROM patients WHERE user_id = ?", session["user_id"]
-        )
+        patients = db.execute("SELECT * FROM patients WHERE user_id = ?", session["user_id"])
         return render_template("index.html", patients=patients)
 
 
@@ -70,23 +68,19 @@ def index():
 def addpatient():
     if request.method == "POST":
         if not (
-            request.form.get("patientCode")
-            and request.form.get("patientName")
-            and request.form.get("patientSurname")
+                request.form.get("patientCode")
+                and request.form.get("patientName")
+                and request.form.get("patientSurname")
         ):
             return apology("TODO")
 
         # Patient's code should be unique in user's scope
         if db.execute(
-            "SELECT patient_id FROM patients WHERE code = ? AND user_id = ?",
-            request.form.get("patientCode"),
-            session["user_id"],
+                "SELECT patient_id FROM patients WHERE code = ? AND user_id = ?",
+                request.form.get("patientCode"),
+                session["user_id"],
         ):
             return apology("Patient's code already exists")
-
-        """
-            SPRAWDZIĆ POPRAWNOŚĆ DANYCH ale to potem
-        """
 
         # Add new patient to db
         db.execute(
@@ -98,9 +92,9 @@ def addpatient():
             session["user_id"],
         )
 
-        patientCode = request.form.get("patientCode")
+        patient_code = request.form.get("patientCode")
         # Redirect to new form
-        return redirect(f"/patient/{patientCode}")
+        return redirect(f"/patient/{patient_code}")
     else:
         return render_template("addpatient.html")
 
@@ -112,21 +106,21 @@ def addform():
 
     # Check if required data was sent
     if not (
-        request.form.get("sex")
-        and request.form.get("age")
-        and request.form.get("weight")
-        and request.form.get("height")
-        and request.form.get("education_level")
-        and request.form.get("doctors_num")
-        and request.form.get("health_status")
-        and request.form.get("cigarettes")
-        and request.form.get("alcohol")
-        and request.form.getlist("medicineName")
-        and request.form.getlist("medicineDate")
-        and request.form.getlist("medicineAdministration")
-        and request.form.getlist("medicineCategory")
-        and request.form.getlist("medicineSource")
-        and request.form.getlist("compliance")
+            request.form.get("sex")
+            and request.form.get("age")
+            and request.form.get("weight")
+            and request.form.get("height")
+            and request.form.get("education_level")
+            and request.form.get("doctors_num")
+            and request.form.get("health_status")
+            and request.form.get("cigarettes")
+            and request.form.get("alcohol")
+            and request.form.getlist("medicineName")
+            and request.form.getlist("medicineDate")
+            and request.form.getlist("medicineAdministration")
+            and request.form.getlist("medicineCategory")
+            and request.form.getlist("medicineSource")
+            and request.form.getlist("compliance")
     ):
         return apology("Missing fields!")
 
@@ -206,8 +200,8 @@ def addform():
     )[0]["form_id"]
 
     # Add information about medical supervision
-    for id in request.form.getlist("specialization"):
-        db.execute("INSERT INTO medical_supervision VALUES (?, ?)", id, form_id)
+    for spec_id in request.form.getlist("specialization"):
+        db.execute("INSERT INTO medical_supervision VALUES (?, ?)", spec_id, form_id)
 
     # Add answers to open-ended questions
     for row in QUESTIONS:
@@ -220,11 +214,11 @@ def addform():
         )
 
     # Add information about taken medicine to db
-    for i in range(len(request.form.getlist("medicineName"))):
+    for i, medicine_name in enumerate(request.form.getlist("medicineName")):
         db.execute(
             "INSERT INTO taken_medicine VALUES (?, ?, ?, ?, ?, ?, ?)",
             form_id,
-            request.form.getlist("medicineName")[i],
+            medicine_name,
             request.form.getlist("medicineDate")[i],
             request.form.getlist("medicineCategory")[i],
             request.form.getlist("medicineSource")[i],
@@ -233,7 +227,7 @@ def addform():
         )
 
     flash("Pomyślnie dodano formularz!")
-    return redirect(f"/patient/{ request.form.get('patient_code') }")
+    return redirect(f"/patient/{request.form.get('patient_code')}")
 
 
 @app.route("/changepassword", methods=["GET", "POST"])
@@ -262,7 +256,8 @@ def change_password():
         # Ensure new password is secure
         elif not secure_password(new_pwd):
             flash(
-                #"New password is not secure! Password must contain at least 10 characters, 2 digits, 2 uppercase and 2 special characters (no spaces)."
+                # "New password is not secure! Password must contain at least 10 characters, 2 digits, 2 uppercase
+                # and 2 special characters (no spaces)."
                 "Hasło powinno zawierać co najmniej 8 znaków, 1 dużą literę i 1 cyfrę."
             )
             return redirect("/changepassword")
@@ -273,11 +268,7 @@ def change_password():
             return redirect("/changepassword")
 
         # Update password
-        db.execute(
-            "UPDATE users SET hash = ? WHERE user_id = ?",
-            generate_password_hash(new_pwd),
-            session["user_id"],
-        )
+        db.execute("UPDATE users SET hash = ? WHERE user_id = ?", generate_password_hash(new_pwd), session["user_id"])
 
         # Redirect user to home page
         flash("Hasło zostało zmienione!")
@@ -295,7 +286,8 @@ def delete_form():
         if not (request.form.get("form_id") and request.form.get("patient_code")):
             return apology("Missing data")
 
-        form = db.execute("SELECT * FROM forms WHERE form_id = ? AND user_id = ?", request.form.get("form_id"), session["user_id"])
+        form = db.execute("SELECT * FROM forms WHERE form_id = ? AND user_id = ?", request.form.get("form_id"),
+                          session["user_id"])
 
         if not form:
             return apology("Form not found")
@@ -319,21 +311,21 @@ def edit_form():
             return apology("Wrong form!")
 
         if not (
-            request.form.get("sex")
-            and request.form.get("age")
-            and request.form.get("weight")
-            and request.form.get("height")
-            and request.form.get("education_level")
-            and request.form.get("doctors_num")
-            and request.form.get("health_status")
-            and request.form.get("cigarettes")
-            and request.form.get("alcohol")
-            and request.form.getlist("medicineName")
-            and request.form.getlist("medicineDate")
-            and request.form.getlist("medicineAdministration")
-            and request.form.getlist("medicineCategory")
-            and request.form.getlist("medicineSource")
-            and request.form.getlist("compliance")
+                request.form.get("sex")
+                and request.form.get("age")
+                and request.form.get("weight")
+                and request.form.get("height")
+                and request.form.get("education_level")
+                and request.form.get("doctors_num")
+                and request.form.get("health_status")
+                and request.form.get("cigarettes")
+                and request.form.get("alcohol")
+                and request.form.getlist("medicineName")
+                and request.form.getlist("medicineDate")
+                and request.form.getlist("medicineAdministration")
+                and request.form.getlist("medicineCategory")
+                and request.form.getlist("medicineSource")
+                and request.form.getlist("compliance")
         ):
             form = db.execute(
                 "SELECT * FROM forms AS f, patients AS p " +
@@ -363,20 +355,20 @@ def edit_form():
             )
 
             return render_template("edit.html",
-                form=form,
-                answers=answers,
-                supervision=supervision,
-                taken_medicine=taken_medicine,
-                education_opt=EDUCATION_OPT,
-                health_opt=HEALTH_OPT,
-                specialization_opt=SPEC_OPT,
-                questions=QUESTIONS,
-                medicine_category=MEDICINE_CATEGORY,
-                medicine_sources=MEDICINE_SOURCES,
-                medicine_administration=MEDICINE_ADMINISTRATION,
-                medicine_problem=MEDICINE_PROBLEM,
-                intervention_opt=INTERVENTION_OPT
-            )
+                                   form=form,
+                                   answers=answers,
+                                   supervision=supervision,
+                                   taken_medicine=taken_medicine,
+                                   education_opt=EDUCATION_OPT,
+                                   health_opt=HEALTH_OPT,
+                                   specialization_opt=SPEC_OPT,
+                                   questions=QUESTIONS,
+                                   medicine_category=MEDICINE_CATEGORY,
+                                   medicine_sources=MEDICINE_SOURCES,
+                                   medicine_administration=MEDICINE_ADMINISTRATION,
+                                   medicine_problem=MEDICINE_PROBLEM,
+                                   intervention_opt=INTERVENTION_OPT
+                                   )
         else:
             patient = db.execute(
                 "SELECT * FROM patients " +
@@ -392,12 +384,12 @@ def edit_form():
                 return apology("Patient does not exist")
 
             form = db.execute("SELECT * FROM forms WHERE form_id = ? " +
-                "AND patient_id = ? " +
-                "AND user_id = ?",
-                request.form.get("form_id"),
-                request.form.get("patient_id"),
-                session["user_id"]
-            )
+                              "AND patient_id = ? " +
+                              "AND user_id = ?",
+                              request.form.get("form_id"),
+                              request.form.get("patient_id"),
+                              session["user_id"]
+                              )
 
             if not form:
                 return apology("Wrong form")
@@ -453,14 +445,9 @@ def edit_form():
             )
 
             # Update information about medical supervision
-            db.execute("DELETE FROM medical_supervision WHERE form_id = ?",
-                request.form.get("form_id")
-            )
-            for id in request.form.getlist("specialization"):
-                db.execute("INSERT INTO medical_supervision VALUES (?, ?)",
-                    id,
-                    request.form.get("form_id")
-                )
+            db.execute("DELETE FROM medical_supervision WHERE form_id = ?", request.form.get("form_id"))
+            for spec_id in request.form.getlist("specialization"):
+                db.execute("INSERT INTO medical_supervision VALUES (?, ?)", spec_id, request.form.get("form_id"))
 
             # Update answers to open-ended questions
             for row in QUESTIONS:
@@ -477,14 +464,12 @@ def edit_form():
                 )
 
             # Update information about taken medicine to db
-            db.execute("DELETE FROM taken_medicine WHERE form_id = ?",
-                request.form.get("form_id")
-            )
-            for i in range(len(request.form.getlist("medicineName"))):
+            db.execute("DELETE FROM taken_medicine WHERE form_id = ?", request.form.get("form_id"))
+            for i, medicine_name in enumerate(request.form.getlist("medicineName")):
                 db.execute(
                     "INSERT INTO taken_medicine VALUES (?, ?, ?, ?, ?, ?, ?)",
                     request.form.get("form_id"),
-                    request.form.getlist("medicineName")[i],
+                    medicine_name,
                     request.form.getlist("medicineDate")[i],
                     request.form.getlist("medicineCategory")[i],
                     request.form.getlist("medicineSource")[i],
@@ -496,10 +481,10 @@ def edit_form():
     else:
         return redirect("/")
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
-
     # Forget any user_id
     session.clear()
 
@@ -515,14 +500,10 @@ def login():
             return apology("must provide password", 403)
 
         # Query database for username
-        rows = db.execute(
-            "SELECT * FROM users WHERE username = ?", request.form.get("username")
-        )
+        rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
 
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(
-            rows[0]["hash"], request.form.get("password")
-        ):
+        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
             return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
@@ -539,7 +520,6 @@ def login():
 @app.route("/logout")
 def logout():
     """Log user out"""
-
     # Forget any user_id
     session.clear()
 
@@ -547,17 +527,13 @@ def logout():
     return redirect("/")
 
 
-@app.route("/newform/<patientCode>", methods=["GET", "POST"])
+@app.route("/newform/<patient_code>", methods=["GET", "POST"])
 @login_required
-def newform(patientCode):
-
+def newform(patient_code):
     """ DISPLAY NEW FORM """
     if request.method == "POST":
 
-        if not (
-            request.form.get("id")
-            and request.form.get("code")
-        ):
+        if not (request.form.get("id") and request.form.get("code")):
             return apology("Missing patient data")
 
         patient = db.execute(
@@ -566,7 +542,7 @@ def newform(patientCode):
             "AND code = ? " +
             "AND user_id = ?",
             request.form.get("id"),
-            patientCode,
+            patient_code,
             session["user_id"]
         )
 
@@ -587,10 +563,11 @@ def newform(patientCode):
             intervention_opt=INTERVENTION_OPT,
         )
     else:
-        if not db.execute("SELECT * FROM patients WHERE code = ? AND user_id = ?", patientCode, session["user_id"]):
+        if not db.execute("SELECT * FROM patients WHERE code = ? AND user_id = ?", patient_code, session["user_id"]):
             return apology("Patient does not exist")
 
-        return redirect(f"/patient/{patientCode}")
+        return redirect(f"/patient/{patient_code}")
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -617,10 +594,7 @@ def register():
 
         # Ensure password is secure
         elif not secure_password(password):
-            flash(
-                #"Password is not secure! Password must contain at least 10 characters, 2 digits, 2 uppercase and 2 special characters (no spaces)."
-                "Hasło powinno zawierać co najmniej 8 znaków, 1 dużą literę i 1 cyfrę."
-            )
+            flash("Hasło powinno zawierać co najmniej 8 znaków, 1 dużą literę i 1 cyfrę.")
             return redirect("/register")
 
         # Query database for username
@@ -631,16 +605,10 @@ def register():
             return apology("Username is not available", 400)
 
         # Add user to database
-        db.execute(
-            "INSERT INTO users (username, hash) VALUES (?, ?)",
-            username,
-            generate_password_hash(password),
-        )
+        db.execute("INSERT INTO users (username, hash) VALUES (?, ?)", username, generate_password_hash(password))
 
         # Query database for username
-        rows = db.execute(
-            "SELECT * FROM users WHERE username = ?", request.form.get("username")
-        )
+        rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["user_id"]
@@ -669,42 +637,30 @@ def search():
     return jsonify(patients)
 
 
-@app.route("/patient/<patientCode>", methods=["GET", "POST"])
+@app.route("/patient/<patient_code>", methods=["GET", "POST"])
 @login_required
-def patient(patientCode):
+def patient(patient_code):
     """Show patient's profile"""
 
     # Get patient's data from patients table
-    patient = db.execute(
-        "SELECT * FROM patients WHERE code = ? AND user_id = ?",
-        patientCode,
-        session["user_id"],
-    )
-    print(patient)
+    patient = db.execute("SELECT * FROM patients WHERE code = ? AND user_id = ?", patient_code, session["user_id"])
     if not patient:
         return apology("Patient does not exist")
 
     # Get all forms that belong to this patient sorted from the newest
-    forms = db.execute(
-        "SELECT * FROM forms WHERE patient_id = ? ORDER BY filled_date DESC",
-        patient[0]["patient_id"],
-    )
+    forms = db.execute( "SELECT * FROM forms WHERE patient_id = ? ORDER BY filled_date DESC", patient[0]["patient_id"])
 
     if not forms:
-        return render_template( "patient.html", patient=patient[0])
-    print(forms[0])
+        return render_template("patient.html", patient=patient[0])
+
     specializations = db.execute(
         "SELECT specialization_name FROM specialization AS s, " +
         "medical_supervision AS ms " +
         "WHERE s.specialization_id = ms.specialization_id AND form_id = ?",
         forms[0]["form_id"],
     )
-    open_ended_answers = db.execute(
-        "SELECT * FROM open_ended_answers WHERE form_id = ?", forms[0]["form_id"]
-    )
-    taken_medicine = db.execute(
-        "SELECT * FROM taken_medicine WHERE form_id = ?", forms[0]["form_id"]
-    )
+    open_ended_answers = db.execute("SELECT * FROM open_ended_answers WHERE form_id = ?", forms[0]["form_id"])
+    taken_medicine = db.execute("SELECT * FROM taken_medicine WHERE form_id = ?", forms[0]["form_id"])
     return render_template(
         "patient.html",
         patient=patient[0],
@@ -734,8 +690,7 @@ def view_form():
     if not form:
         apology("Form does not exist")
 
-    patient = db.execute("SELECT * FROM patients WHERE patient_id = ?",
-        form[0]["patient_id"])[0]
+    patient = db.execute("SELECT * FROM patients WHERE patient_id = ?", form[0]["patient_id"])[0]
 
     specializations = db.execute(
         "SELECT specialization_name FROM specialization AS s, " +
@@ -752,14 +707,14 @@ def view_form():
     )
 
     taken_medicine = db.execute(
-        "SELECT medicine_name, "+
-        "start_date, category_name, source_name, administration_name, "+
-        "compliance "+
-        "FROM taken_medicine AS tm, medicine_administration AS ma, "+
-        "medicine_category AS mc, medicine_source AS ms "+
-        "WHERE ma.administration_id=tm.administration_id "+
-        "AND mc.category_id=tm.category_id "+
-        "AND ms.source_id=tm.source_id "+
+        "SELECT medicine_name, " +
+        "start_date, category_name, source_name, administration_name, " +
+        "compliance " +
+        "FROM taken_medicine AS tm, medicine_administration AS ma, " +
+        "medicine_category AS mc, medicine_source AS ms " +
+        "WHERE ma.administration_id=tm.administration_id " +
+        "AND mc.category_id=tm.category_id " +
+        "AND ms.source_id=tm.source_id " +
         "AND tm.form_id = ?",
         request.form.get("id"),
     )
@@ -774,8 +729,8 @@ def view_form():
     ]
 
     summary_title = ["Rozpoznanie", "Lek/preparat - problem terapeutyczny",
-        "Cel do osiągnięcia", "Obecny stan", "Interwencja farmaceutyczna",
-        "Zalecenia farmaceuty"]
+                     "Cel do osiągnięcia", "Obecny stan", "Interwencja farmaceutyczna",
+                     "Zalecenia farmaceuty"]
 
     summary = zip(summary_title, summary_answer)
 

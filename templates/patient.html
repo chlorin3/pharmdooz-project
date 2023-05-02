@@ -1,0 +1,162 @@
+{% extends "layout.html" %}
+{% block script %}
+<script src="/static/myscript.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block title %}
+Profil pacjenta
+{% endblock %}
+
+{% block main %}
+    <ul class="list-inline m-3">
+        <li class="list-item">
+            <h3>{{ patient.patient_name }} {{ patient.patient_surname }}, {{ patient.code }}</h3>
+        </li>
+        <li class="list-inline-item m-3">
+            <form action="/newform/{{ patient.code }}" method="post">
+                <input name="id" type="hidden" value="{{ patient.patient_id }}">
+                <input name="code" type="hidden" value="{{ patient.code }}">
+                <input class="btn btn-outline-primary btn-size" type="submit" value="Nowy formularz">
+            </form>
+        </li>
+        <li class="list-inline-item">
+            <button class="btn btn-outline-secondary btn-size" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                Wypełnione formularze
+            </button>
+        </li>
+      </ul>
+
+<div class="container-md row mx-auto text-break">
+{% if not forms %}
+<div class="alert alert-warning" role="alert">
+    Pacjent nie ma żadnych formularzy
+</div>
+{% else %}
+<div class="col-md-6">
+    <table class="table caption-top text-start">
+        <caption>Dane pacjenta z dnia {{ forms[0].filled_date.split(" ")[0] }}</caption>
+            <tr>
+                <th scope="row">Wiek</th>
+                <td>{{ forms[0].age }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Płeć</th>
+                <td>{{ forms[0].sex }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Waga</th>
+                <td>{{ forms[0].weight }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Wzrost</th>
+                <td>{{ forms[0].height }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Wykształcenie</th>
+                <td>{{ forms[0].education_level }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Samoocena stanu zdrowia</th>
+                <td>{{ forms[0].health_status }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Specjalizacje lekarzy opiekujących się pacjentem</th>
+                <td>
+                    {% for row in specializations %}
+                    {{ row.specialization_name }}<br>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Główne rozpoznania</th>
+                <td>{{ forms[0].medical_diagnosis }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Uczulenia</th>
+                <td>{{ forms[0].allergy }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Papierosy</th>
+                <td>{{ forms[0].cigarettes_status }}
+                    {{ forms[0].cigarettes_freq }}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Alkohol</th>
+                <td>{{ forms[0].alcohol_status }}
+                    {{ forms[0].alcohol_freq }}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Pobierane preparaty farmaceutyczne</th>
+                <td>
+                    {% for row in taken_medicine %}
+                    {{ row.medicine_name }}<br>
+                    {% endfor %}
+                </td>
+            </tr>
+    </table>
+</div>
+<div class="col-md-6">
+    <table class="table caption-top text-start">
+        <caption>Ocena</caption>
+        <tr>
+            <th>Rozpoznanie</th>
+            <td>{{ forms[0].diagnosis }}</td>
+        </tr>
+        <tr>
+            <th>Lek/preparat - problem terapeutyczny</th>
+            <td>{{ forms[0].issue }}</td>
+        </tr>
+        <tr>
+            <th>Cel do osiągnięcia</th>
+            <td>{{ forms[0].goal }}</td>
+        </tr>
+        <tr>
+            <th>Obecny stan</th>
+            <td>{{ forms[0].current_condition }}</td>
+        </tr>
+        <tr>
+            <th>Interwencja farmaceuty</th>
+            <td>{{ forms[0].intervention }}</td>
+        </tr>
+        <tr>
+            <th>Zalecenia farmaceuty</th>
+            <td>{{ forms[0].recommendation }}</td>
+        </tr>
+    </table>
+
+</div>
+<!-- END DIV COLUMN -->
+{% endif %}
+</div>
+<!-- END DIV CONTAINER ROW -->
+
+
+<!-- OFFCANVAS -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Formularze pacjenta</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body">
+        <div>
+            Poniżej znajduje się lista wszystkich formularzy wypełnionych dla danego pacjenta (od najnowszego do najstarszego).
+        </div>
+        <ol>
+        {% for row in forms %}
+            <li>
+                <form action="/view_form" method="post">
+                    <input name="id" type="hidden" value="{{ row.form_id }}">
+                    <input class="btn btn-link" type="submit" value="{{ row.filled_date }}">
+                </form>
+            </li>
+        {% endfor %}
+        </ol>
+    </div>
+</div>
+<!-- END OFFCANVAS -->
+{% endblock %}
